@@ -13,6 +13,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Local setup configurations
+setup_temp.sh
+
+# Local storage file
+logs.txt
+
 # C extensions
 *.so
 
