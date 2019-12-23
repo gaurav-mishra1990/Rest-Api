@@ -1,5 +1,6 @@
 from elasticsearch import Elasticsearch
 
+
 def connect_elasticsearch():
     _es = None
     _es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
