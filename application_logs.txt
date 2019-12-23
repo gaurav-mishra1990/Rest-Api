@@ -1,2 +1,0 @@
-# File for storing application logs.
-
