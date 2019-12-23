@@ -5,6 +5,8 @@ class Config(object):
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
+    STORAGE_TYPE = ""
+    FILE = ""
     SQLALCHEMY_DATABASE_URI = ""
 
 
@@ -36,13 +38,17 @@ config_dict = {
 
 config = config_dict["default"]
 
-DB_HOST_NAME = os.environ.get("DB_HOST_NAME")
-DB_PORT = os.environ.get("DB_PORT")
-DB_NAME = os.environ.get("DB_NAME")
-DB_USER = os.environ.get("DB_USER")
-DB_PASSWORD = os.environ.get("DB_PASSWORD")
+Config.STORAGE_TYPE = os.environ.get("STORAGE_TYPE")
 
-Config.SQLALCHEMY_DATABASE_URI = "postgres://{}:{}@{}:{}/{}".format(DB_USER, DB_PASSWORD, DB_HOST_NAME, DB_PORT, DB_NAME)
+if Config.STORAGE_TYPE != "file_storage":
+    DB_HOST_NAME = os.environ.get("DB_HOST_NAME")
+    DB_PORT = os.environ.get("DB_PORT")
+    DB_NAME = os.environ.get("DB_NAME")
+    DB_USER = os.environ.get("DB_USER")
+    DB_PASSWORD = os.environ.get("DB_PASSWORD")
+    Config.SQLALCHEMY_DATABASE_URI = "postgres://{}:{}@{}:{}/{}".format(DB_USER, DB_PASSWORD, DB_HOST_NAME, DB_PORT, DB_NAME)
+else:
+    FILE = os.getenv("FILE")
 
 try:
     flask_configuration = os.environ.get("FLASK_ENV")

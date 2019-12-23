@@ -7,8 +7,13 @@ from config import config
 
 app = Flask(__name__)
 app.config.from_object(config)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-db = SQLAlchemy(app)
+
+
+if app.config['STORAGE_TYPE'] != 'file_storage':
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+    db = SQLAlchemy(app)
+else:
+    pass
 
 
 def initialize_app(flask_app):
