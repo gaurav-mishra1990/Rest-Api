@@ -30,6 +30,6 @@ class Log(Resource):
     @api.expect(parser)
     @api.expect(log_parser)
     def post(self):
-        args = parser.parse_args()
+        args = parser.parse_args(strict=True)
         log_args = log_parser.parse_args(req=args)
         insert_log(args)

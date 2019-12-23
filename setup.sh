@@ -27,3 +27,9 @@ export DB_USER=db_user_name
 
 # Password of the database user
 export DB_PASSWORD=db_user_password
+
+# Specify the host ip address of Elasticsearch server
+export ES_HOST=localhost
+
+# Specify the port to connect to Elasticsearch server
+export ES_PORT=9200
