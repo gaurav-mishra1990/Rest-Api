@@ -21,9 +21,9 @@ def insert_log_in_db(log):
     es_connected = True
     if es_connected:
         if storage_type == 'file_storage':
-            file = os.getenv("FILE")
+            log_file = os.getenv("LOG_FILE")
             try:
-                f = open(file, 'a')
+                f = open(log_file, 'a')
             except IOError:
                 print("Could not open file")
             

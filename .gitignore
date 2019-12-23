@@ -17,7 +17,7 @@ __pycache__/
 setup_temp.sh
 
 # Local storage file
-logs.txt
+# logs.txt
 
 # C extensions
 *.so

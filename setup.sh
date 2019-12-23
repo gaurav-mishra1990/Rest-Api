@@ -11,7 +11,10 @@ export FLASK_ENV=development
 export STORAGE_TYPE=file_storage
 
 # Specify the full absolute path of the file in case of file_storage
-export FILE=logs.txt
+export LOG_FILE=application_logs.txt
+
+# Specify the full absolute path of the file to store application data in case of file_storage
+export APPLICATION_FILE=applications.txt
 
 # Specify the host ip address of the database in case of database storage
 export DB_HOST_NAME=localhost
