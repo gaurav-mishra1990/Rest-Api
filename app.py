@@ -1,9 +1,15 @@
 from flask import Flask
 from flask_restplus import Api
+from flask_sqlalchemy import SQLAlchemy
 
 from apis.Log.routes import api as log_api
+from config import config
 
 app = Flask(__name__)
+app.config.from_object(config)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+db = SQLAlchemy(app)
+
 
 def initialize_app(flask_app):
     api = Api(title='Any Title', version='1.0', description='A description')

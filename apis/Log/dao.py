@@ -4,14 +4,17 @@ def connect_elasticsearch():
     _es = None
     _es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
     if _es.ping():
-        # print('Yay Connect')
-        pass
+        return True
     else:
-        # print('Awww it could not connect!')
-        pass
+        return False
     return _es
 
 
-def test():
-    temp = connect_elasticsearch()
-    print(temp)
+def insert_log_in_db():
+    es_connected = connect_elasticsearch()
+    if es_connected:
+        pass
+    else:
+        pass
+        
+

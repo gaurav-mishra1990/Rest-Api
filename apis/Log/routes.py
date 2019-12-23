@@ -1,6 +1,6 @@
 from flask_restplus import Namespace, Resource
 from .parsers import parser, log_parser
-from .dao import test
+from .service import insert_log
 
 api = Namespace('logs', description='Logs related operations')
 
@@ -12,6 +12,4 @@ class Log(Resource):
     def post(self):
         args = parser.parse_args()
         log_args = log_parser.parse_args(req=args)
-        print(args)
-        print(log_args)
-        test()
+        insert_log(args)

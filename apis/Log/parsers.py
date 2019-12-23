@@ -25,6 +25,3 @@ log_parser.add_argument('log_message', type=str, required=True, location = ('app
 
 
 
-
-
-
