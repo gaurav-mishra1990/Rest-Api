@@ -4,6 +4,7 @@ from datetime import datetime
 
 class Application(db.Model):
     application_id = db.Column(db.Integer, primary_key=True)
+    application_name = db.Column(db.String(64), index=True, nullable=False)
     application_type = db.Column(db.String(64), index=True)
 
 

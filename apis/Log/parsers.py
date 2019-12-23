@@ -1,4 +1,4 @@
-# Parsing the arguments for the incoming post request.
+# Parsing the arguments for the incoming post request for logs.
 
 from flask_restplus import reqparse, inputs
 from datetime import datetime
@@ -6,7 +6,6 @@ from datetime import datetime
 
 parser = reqparse.RequestParser(bundle_errors=True)
 parser.add_argument('application_id', type=int, required=True, help='No application id given.')
-parser.add_argument('application_name', type=str, required=True, help='No application name passed.')
 parser.add_argument('application_log', type=dict, required=True, help='No log provided.')
 
 log_parser = reqparse.RequestParser()

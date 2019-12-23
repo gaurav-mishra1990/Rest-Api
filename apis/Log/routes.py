@@ -22,7 +22,7 @@ def Response_formatter(status_code, hardcoded_message, message):
     return resp
 
 
-api = Namespace('logs', description='Logs related operations')
+api = Namespace('log', description='Logs related operations')
 
 @api.route('/')
 class Log(Resource):
