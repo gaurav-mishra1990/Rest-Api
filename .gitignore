@@ -16,7 +16,7 @@ __pycache__/
 # Local setup configurations
 setup_temp.sh
 
-# Local storage file
+# Log file
 
 # C extensions
 *.so

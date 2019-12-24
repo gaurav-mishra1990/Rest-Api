@@ -5,8 +5,27 @@ from flask_sqlalchemy import SQLAlchemy
 from apis.Log.routes import api as log_api
 from config import config
 
+import logging
+from logging.handlers import RotatingFileHandler
+
+
 app = Flask(__name__)
 app.config.from_object(config)
+
+# Rotating file handler is used to log in a file.
+handler = RotatingFileHandler('test.log')
+
+# File logging level set to Debug.
+handler.setLevel(logging.DEBUG)
+
+# Format of the log message.
+# timestamp levelname threadId filename lineno message.
+handler.setFormatter(
+    logging.Formatter(
+        "%(asctime)s %(levelname)s %(thread)d %(filename)s %(lineno)d %(message)s"
+    ))
+app.logger.addHandler(handler)
+app.logger.setLevel(logging.DEBUG)
 
 
 if app.config['STORAGE_TYPE'] != 'file_storage':
