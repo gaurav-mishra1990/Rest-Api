@@ -32,4 +32,5 @@ class Log(Resource):
     def post(self):
         args = parser.parse_args(strict=True)
         log_args = log_parser.parse_args(req=args)
+        #print(args)
         insert_log(args)

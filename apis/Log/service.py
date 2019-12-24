@@ -1,5 +1,5 @@
-from .dao import insert_log_in_db
+from .dao import store_log
 
 def insert_log(log):
-    insert_log_in_db(log)
+    store_log(log)
     

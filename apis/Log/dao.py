@@ -1,6 +1,7 @@
 import os
 import json
 from datetime import datetime
+from elasticsearch import Elasticsearch
 
 
 storage_type = os.getenv("STORAGE_TYPE")
@@ -12,22 +13,64 @@ def date_converter(datetime_object):
     return datetime_object.__str__()
 
 
+def date_formatter(datetime_object):
+    year = datetime_object.year
+    month = datetime_object.month
+    day = datetime_object.day
+    hour = datetime_object.hour
+    minute = datetime_object.minute
+    second = datetime_object.second
+    timestamp = datetime(year=year, month=month, day=day, hour=hour, minute=minute, second=second)
+    timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+    # timestamp = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
+
+    return timestamp
+
+
+
+def form_log_dict(log_json):
+    log = dict()
+    log['application_id'] = log_json["application_id"]
+    application_log = log_json["application_log"]
+    log['timestamp'] = log_json["timestamp"]
+
+    keys = application_log.keys()
+
+    log['application_name'] = log_json["application_name"] if "application_name" in log_json.keys() else None
+    log['application_type'] = log_json["application_type"] if "application_type" in log_json.keys() else None
+    application_log['logging_mode'] = application_log["logging_mode"] if "logging_mode" in keys else None
+    application_log['host_ip'] = application_log["host_ip"] if "host_ip" in keys else None
+    application_log['access_request'] = application_log["access_request"] if "access_request" in keys else None
+    application_log['result_status_code'] = application_log["result_status_code"] if "result_status_code" in keys else None
+    application_log['user_agent'] = application_log["user_agent"] if "user_agent" in keys else None
+    application_log['user_name'] = application_log["user_name"] if "user_name" in keys else None
+    application_log['bytes_transferred'] = application_log["bytes_transferred"] if "bytes_transferred" in keys else None
+    log["application_log"] = application_log
+
+    return log
+
+
+
 def connect_elasticsearch():
     _es = None
     _es = Elasticsearch([{'host': es_host, 'port': es_port}])
     if _es.ping():
-        return True
+        print("Connected to Elasticsearch server")
     else:
-        return False
+        print("Not able to connect to Elasticsearch server")
+    return _es
 
 
-def insert_in_es(log):
-    from elasticsearch import Elasticsearch
+def insert_in_es(elastic_object, index_name, record):
+    try:
+        outcome = elastic_object.index(index=index_name, doc_type='_doc', body=record)
+    except Exception as ex:
+        print('Error in indexing data')
+        print(str(ex))
 
 
 
-
-def insert_db(log):
+def insert_in_db(log):
     from models import Application_Log
     from app import db
 
@@ -56,36 +99,34 @@ def insert_db(log):
 
 
 
-def insert_log_in_db(log):
-    es_connected = True
-    # es_connected = connect_elasticsearch()
-    if es_connected:
+def store_log(log_json):
+    # es_connected = True
+    es = connect_elasticsearch()
+    log_json['timestamp'] = date_formatter(datetime.utcnow())
+    # log = form_log_dict(log_json)
+    if es is not None:
         if storage_type == 'file_storage':
             log_file = os.getenv("LOG_FILE")
             try:
                 f = open(log_file, 'a')
-                insert_in_es(log)
+                del log_json["unparsed_arguments"]
+                log_str = json.dumps(log_json, default = date_converter, indent=4)
+                #print(log_json)
+                log = form_log_dict(log_json)
+                insert_in_es(es, index_name="logs", record=log)
             except IOError:
                 print("Could not open file")
             
             with f:
-                log['timestamp'] = datetime.utcnow()
-                del log["unparsed_arguments"]
-                log_str = json.dumps(log, default = date_converter, indent=4)
                 f.write('{},\n'.format(log_str))
                 f.close()
 
         elif storage_type == 'database':
-            insert_db(log)
+            insert_in_db(log)
         else:
             pass
     else:
         pass
-    
-    # if storage_type == 'file_storage':
-    #     file = os.getenv("FILE")
-    #     with open(file, 'a') as f:
-    #         f.write("hello")
             
 
 
