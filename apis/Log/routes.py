@@ -25,7 +25,7 @@ def Response_formatter(status_code, hardcoded_message, message):
 api = Namespace('log', description='Logs related operations')
 
 
-@api.route('/')
+@api.route('')
 class Log(Resource):
     @api.expect(log_parser)
     @api.expect(parser)
@@ -42,29 +42,24 @@ class Log(Resource):
 
     def get(self):
         request_dict = {
-                    "application_id": None,
-                    "log_level": None,
-                    "status_code": None,
-                    "date": None
-                    }
-        try:
-            request_dict["application_id"] = request.args.get("application_id")
-        except Exception:
-            pass
-        try:
+            "application_id": None,
+            "log_level": None,
+            "status_code": None,
+            "date": None
+        }
+        application_id = request.args.get("application_id")
+        if not application_id:
+            return Response_formatter(400, "NO_APPLICATION_ID", "No Application Id passed in the request")
+        else:
+            request_dict["application_id"] = application_id
             request_dict["log_level"] = request.args.get("log_level")
-        except Exception:
-            pass
-        try:
             request_dict["status_code"] = request.args.get("status_code")
-        except Exception:
-            pass
-        try:
             request_dict["date"] = request.args.get("date")
-        except Exception:
-            pass
+            status_code, response_message = get_log(request_dict)
 
-        results = get_log(request_dict)
-        print(results)
-        
+        if status_code == 200:
+            hardcoded_message = "SUCCESSFUL_GET_REQUEST"
+        else:
+            hardcoded_message = "NO_RESPONSE_FOR_GET_REQUEST"
 
+        return Response_formatter(status_code, hardcoded_message, response_message)

@@ -51,10 +51,10 @@ def form_log_dict(log_json):
 def connect_elasticsearch():
     _es = None
     _es = Elasticsearch([{'host': es_host, 'port': es_port}])
-    if _es.ping():
-        print("Connected to Elasticsearch server")
-    else:
-        print("Not able to connect to Elasticsearch server")
+    # if _es.ping():
+    #     print("Connected to Elasticsearch server")
+    # else:
+    #     print("Not able to connect to Elasticsearch server")
     return _es
 
 
@@ -152,7 +152,7 @@ def get_logs_from_db(args):
 
         for log_temp in query_result['hits']['hits']:
             log = log_temp['_source']
-                
+
             if "timestamp" in log.keys():
                 del log["timestamp"]
 
@@ -160,5 +160,8 @@ def get_logs_from_db(args):
 
             if (args["log_level"] == log['application_log']["logging_mode"] or (not args["log_level"])) and (args["status_code"] == log['application_log']["result_status_code"] or (not args['status_code'])) and (args["date"] == log_date or (not args["date"])):
                 results.append(log)
+        return (200, results)
+    else:
+        return (500, "Internal Server Error")
 
-        return results
+        
