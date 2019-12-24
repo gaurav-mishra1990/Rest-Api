@@ -135,3 +135,30 @@ def store_log(log_json):
             pass
     else:
         return (500, "Internal Server Error")
+
+
+def search(es_object, index_name, search):
+    res = es_object.search(index=index_name, body=search)
+    return res
+
+
+def get_logs_from_db(args):
+    es = connect_elasticsearch()
+    if es is not None:
+        search_object = {'query': {'match': {'application_id': args['application_id']}}}
+        query_result = search(es, 'logs', json.dumps(search_object))
+
+        results = list()
+
+        for log_temp in query_result['hits']['hits']:
+            log = log_temp['_source']
+                
+            if "timestamp" in log.keys():
+                del log["timestamp"]
+
+            log_date = log['application_log']['log_timestamp'].split(" ")[0]
+
+            if (args["log_level"] == log['application_log']["logging_mode"] or (not args["log_level"])) and (args["status_code"] == log['application_log']["result_status_code"] or (not args['status_code'])) and (args["date"] == log_date or (not args["date"])):
+                results.append(log)
+
+        return results

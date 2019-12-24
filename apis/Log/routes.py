@@ -1,10 +1,10 @@
 from flask_restplus import Namespace, Resource
-from flask import jsonify
+from flask import jsonify, request
 from datetime import datetime
 from apis.Response import Response as Rs
 
 from .parsers import parser, log_parser
-from .service import insert_log
+from .service import insert_log, get_log
 
 
 def Response_formatter(status_code, hardcoded_message, message):
@@ -39,3 +39,32 @@ class Log(Resource):
             hardcoded_message = "LOG_NOT_POSTED"
 
         return Response_formatter(status_code, hardcoded_message, message)
+
+    def get(self):
+        request_dict = {
+                    "application_id": None,
+                    "log_level": None,
+                    "status_code": None,
+                    "date": None
+                    }
+        try:
+            request_dict["application_id"] = request.args.get("application_id")
+        except Exception:
+            pass
+        try:
+            request_dict["log_level"] = request.args.get("log_level")
+        except Exception:
+            pass
+        try:
+            request_dict["status_code"] = request.args.get("status_code")
+        except Exception:
+            pass
+        try:
+            request_dict["date"] = request.args.get("date")
+        except Exception:
+            pass
+
+        results = get_log(request_dict)
+        print(results)
+        
+
