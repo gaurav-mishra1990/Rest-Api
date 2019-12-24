@@ -3,13 +3,14 @@
 from flask_restplus import reqparse, inputs
 from datetime import datetime
 
-
 parser = reqparse.RequestParser(bundle_errors=True)
 parser.add_argument('application_id', type=int, required=True, help='No application id given.')
+parser.add_argument('application_type', type=str)
+parser.add_argument('application_name', type=str)
 parser.add_argument('application_log', type=dict, required=True, help='No log provided.')
 
 log_parser = reqparse.RequestParser()
-log_parser.add_argument('timestamp', required=True, type=lambda x: datetime.strptime(x,'%Y-%m-%dT%H:%M:%S'), location=('application_log'), help= 'No timestamp provided for the log.')
+log_parser.add_argument('log_timestamp', required=True, type=lambda x: datetime.strptime(x,'%Y-%m-%dT%H:%M:%S'), location=('application_log'), help= 'No timestamp provided for the log.')
 log_parser.add_argument('logging_mode', type=str, location = ('application_log'))
 log_parser.add_argument('host_ip', type=inputs.ip, location = ('application_log'))
 log_parser.add_argument('access_request', type=str, location = ('application_log'))
