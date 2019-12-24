@@ -55,6 +55,3 @@ try:
     config = config_dict[flask_configuration]
 except Exception:
     pass
-
-
-     

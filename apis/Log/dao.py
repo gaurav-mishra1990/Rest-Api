@@ -22,10 +22,8 @@ def date_formatter(datetime_object):
     second = datetime_object.second
     timestamp = datetime(year=year, month=month, day=day, hour=hour, minute=minute, second=second)
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
-    # timestamp = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
 
     return timestamp
-
 
 
 def form_log_dict(log_json):
@@ -50,7 +48,6 @@ def form_log_dict(log_json):
     return log
 
 
-
 def connect_elasticsearch():
     _es = None
     _es = Elasticsearch([{'host': es_host, 'port': es_port}])
@@ -63,11 +60,10 @@ def connect_elasticsearch():
 
 def insert_in_es(elastic_object, index_name, record):
     try:
-        outcome = elastic_object.index(index=index_name, doc_type='_doc', body=record)
-    except Exception as ex:
-        print('Error in indexing data')
-        print(str(ex))
-
+        temp = elastic_object.index(index=index_name, doc_type='_doc', body=record)
+        return True
+    except Exception:
+        return False
 
 
 def insert_in_db(log):
@@ -91,16 +87,18 @@ def insert_in_db(log):
     user_name = application_log["user_name"] if "user_name" in keys else None
     bytes_transferred = application_log["bytes_transferred"] if "bytes_transferred" in keys else None
 
-    log_object = Application_Log(application_id=application_id, application_name=application_name, application_type=application_type, log_timestamp=log_timestamp, log_message=log_message,logging_mode=logging_mode, host_ip=host_ip, access_request=access_request,result_status_code=result_status_code, user_agent=user_agent, user_name=user_name,bytes_transferred=bytes_transferred)
+    log_object = Application_Log(application_id=application_id, application_name=application_name, application_type=application_type, log_timestamp=log_timestamp, log_message=log_message, logging_mode=logging_mode, host_ip=host_ip, access_request=access_request, result_status_code=result_status_code, user_agent=user_agent, user_name=user_name, bytes_transferred=bytes_transferred)
 
-    db.session.add(log_object)
-    db.session.commit()
-    db.session.close()
-
+    try:
+        db.session.add(log_object)
+        db.session.commit()
+        db.session.close()
+        return True
+    except Exception:
+        return False
 
 
 def store_log(log_json):
-    # es_connected = True
     es = connect_elasticsearch()
     log_json['timestamp'] = date_formatter(datetime.utcnow())
     if es is not None:
@@ -109,24 +107,31 @@ def store_log(log_json):
             try:
                 f = open(log_file, 'a')
                 del log_json["unparsed_arguments"]
-                log_str = json.dumps(log_json, default = date_converter, indent=4)
+                log_str = json.dumps(log_json, default=date_converter, indent=4)
                 log = form_log_dict(log_json)
-                insert_in_es(es, index_name="logs", record=log)
+                flag = insert_in_es(es, index_name="logs", record=log)
+                if not flag:
+                    return (500, "Internal Server Error")
             except IOError:
-                print("Could not open file")
-            
+                return (500, "Internal Server Error")
             with f:
                 f.write('{},\n'.format(log_str))
                 f.close()
+                return (201, "Resource Posted Successfully")
 
         elif storage_type == 'database':
-            insert_in_db(log_json)
+            del log_json["unparsed_arguments"]
+            log = form_log_dict(log_json)
+            flag = insert_in_es(es, index_name="logs", record=log)
+            if flag:
+                flag_db = insert_in_db(log_json)
+                if flag_db:
+                    return (201, "Resource Posted Successfully")
+                else:
+                    return (500, "Internal Server Error")
+            else:
+                return (500, "Internal Server Error")
         else:
             pass
     else:
-        pass
-            
-
-
-        
-
+        return (500, "Internal Server Error")

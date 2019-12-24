@@ -24,13 +24,18 @@ def Response_formatter(status_code, hardcoded_message, message):
 
 api = Namespace('log', description='Logs related operations')
 
+
 @api.route('/')
 class Log(Resource):
-    
-    @api.expect(parser)
     @api.expect(log_parser)
+    @api.expect(parser)
     def post(self):
         args = parser.parse_args(strict=True)
         log_args = log_parser.parse_args(req=args)
-        #print(args)
-        insert_log(args)
+        status_code, message = insert_log(args)
+        if status_code == 201:
+            hardcoded_message = "LOG_POSTED_SUCCESSFULLY"
+        else:
+            hardcoded_message = "LOG_NOT_POSTED"
+
+        return Response_formatter(status_code, hardcoded_message, message)

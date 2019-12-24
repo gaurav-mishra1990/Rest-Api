@@ -21,6 +21,7 @@ def initialize_app(flask_app):
     api.add_namespace(log_api)
     api.init_app(flask_app)
 
+
 def main():
     initialize_app(app)
     app.run(debug=True)
