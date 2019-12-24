@@ -103,7 +103,6 @@ def store_log(log_json):
     # es_connected = True
     es = connect_elasticsearch()
     log_json['timestamp'] = date_formatter(datetime.utcnow())
-    # log = form_log_dict(log_json)
     if es is not None:
         if storage_type == 'file_storage':
             log_file = os.getenv("LOG_FILE")
@@ -111,7 +110,6 @@ def store_log(log_json):
                 f = open(log_file, 'a')
                 del log_json["unparsed_arguments"]
                 log_str = json.dumps(log_json, default = date_converter, indent=4)
-                #print(log_json)
                 log = form_log_dict(log_json)
                 insert_in_es(es, index_name="logs", record=log)
             except IOError:
@@ -122,7 +120,7 @@ def store_log(log_json):
                 f.close()
 
         elif storage_type == 'database':
-            insert_in_db(log)
+            insert_in_db(log_json)
         else:
             pass
     else:
