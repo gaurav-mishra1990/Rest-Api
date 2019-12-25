@@ -163,5 +163,3 @@ def get_logs_from_db(args):
         return (200, results)
     else:
         return (500, "Internal Server Error")
-
-        

@@ -5,27 +5,9 @@ from flask_sqlalchemy import SQLAlchemy
 from apis.Log.routes import api as log_api
 from config import config
 
-import logging
-from logging.handlers import RotatingFileHandler
-
 
 app = Flask(__name__)
 app.config.from_object(config)
-
-# Rotating file handler is used to log in a file.
-handler = RotatingFileHandler('test.log')
-
-# File logging level set to Debug.
-handler.setLevel(logging.DEBUG)
-
-# Format of the log message.
-# timestamp levelname threadId filename lineno message.
-handler.setFormatter(
-    logging.Formatter(
-        "%(asctime)s %(levelname)s %(thread)d %(filename)s %(lineno)d %(message)s"
-    ))
-app.logger.addHandler(handler)
-app.logger.setLevel(logging.DEBUG)
 
 
 if app.config['STORAGE_TYPE'] != 'file_storage':
@@ -43,6 +25,19 @@ def initialize_app(flask_app):
 
 def main():
     initialize_app(app)
+    import logging
+    logFormatStr = '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
+    logging.basicConfig(format=logFormatStr, filename="global.log", level=logging.DEBUG)
+    formatter = logging.Formatter(logFormatStr, '%m-%d %H:%M:%S')
+    fileHandler = logging.FileHandler("summary.log")
+    fileHandler.setLevel(logging.DEBUG)
+    fileHandler.setFormatter(formatter)
+    streamHandler = logging.StreamHandler()
+    streamHandler.setLevel(logging.DEBUG)
+    streamHandler.setFormatter(formatter)
+    app.logger.addHandler(fileHandler)
+    app.logger.addHandler(streamHandler)
+    app.logger.info("Logging is set up.")
     app.run(debug=True)
 
 

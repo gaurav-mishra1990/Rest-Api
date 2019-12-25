@@ -17,6 +17,7 @@ __pycache__/
 setup_temp.sh
 
 # Log file
+test.log
 
 # C extensions
 *.so
