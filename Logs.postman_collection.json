@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "596ab484-4a2d-410e-8889-9e714db80d0f",
+		"name": "Logs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Post request to logs Api",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"application_id\": \"23457\",\n    \"application_log\": {\n        \"log_timestamp\": \"2016-07-12 23:13:3\",\n        \"logging_mode\": \"INFO\",\n        \"host_ip\": \"192.168.1.1\",\n        \"access_request\": \"GET\",\n        \"result_status_code\": \"200\",\n        \"user_agent\": \"mozilla\",\n        \"user_name\": \"Gaurav\",\n        \"bytes_transferred\": \"12345\",\n        \"log_message\": \"hello th@ere\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/log/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"log",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create index and mapping elasticsearch",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"mappings\": {\n  \t\"_doc\":{\n  \t  \"properties\": {\n    \t\t\"application_id\":{ \"type\": \"keyword\" },  \n    \t\t\"application_name\":{ \"type\": \"keyword\"  },\n    \t\t\"application_type\":{\"type\":\"keyword\"},\n    \t\t\"timestamp\":{\"type\":\"keyword\"},\n    \t\t\"application_log\":{ \n      \t\t\t\t\"type\":\"nested\",\n      \t\t\t\t\"include_in_parent\": true,\n      \t\t\t\t\"properties\": {\n      \t\t\t\t\t\t\"log_timestamp\":{\"type\":\"keyword\"},\n      \t\t\t\t\t\t\"logging_mode\":{\"type\": \"keyword\"},\n      \t\t\t\t\t\t\"host_ip\":{\"type\": \"ip\"},\n      \t\t\t\t\t\t\"access_request\":{\"type\": \"keyword\"},\n      \t\t\t\t\t\t\"result_status_code\":{\"type\":\"keyword\"},\n      \t\t\t\t\t\t\"user_agent\":{\"type\": \"keyword\"},\n      \t\t\t\t\t\t\"user_name\":{\"type\":\"keyword\"},\n      \t\t\t\t\t\t\"bytes_transferred\":{\"type\": \"integer\"},\n      \t\t\t\t\t\t\"log_message\":{\"type\": \"text\", \"index\": false}\n      \t\t\t\t\t\t\t   }\n    \t\t\t\t\t\t\t}     \n    \t\t\t\t}\n\t\t\t}\n\t\t}\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9200/logs?include_type_name=true",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"logs"
+					],
+					"query": [
+						{
+							"key": "include_type_name",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get mapping details",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9200/logs/_mapping",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"logs",
+						"_mapping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a Index",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9200/logs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"logs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get request to the Logger API",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/log?application_id=23457&log_level=INFO&status_code=200",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"log"
+					],
+					"query": [
+						{
+							"key": "application_id",
+							"value": "23457"
+						},
+						{
+							"key": "log_level",
+							"value": "INFO"
+						},
+						{
+							"key": "status_code",
+							"value": "200"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
