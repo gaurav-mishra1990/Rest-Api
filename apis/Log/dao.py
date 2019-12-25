@@ -2,6 +2,7 @@ import os
 import json
 from datetime import datetime
 from elasticsearch import Elasticsearch
+from flask import current_app as app
 
 
 storage_type = os.getenv("STORAGE_TYPE")
@@ -117,6 +118,7 @@ def store_log(log_json):
             with f:
                 f.write('{},\n'.format(log_str))
                 f.close()
+                app.logger.debug("Checking")
                 return (201, "Resource Posted Successfully")
 
         elif storage_type == 'database':
@@ -134,6 +136,7 @@ def store_log(log_json):
         else:
             pass
     else:
+        app.logger.info("Elasticsearch server not responding.")
         return (500, "Internal Server Error")
 
 
