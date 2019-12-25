@@ -23,8 +23,8 @@ After cloning the repo -
 4. Install the required Python packages - sudo python3 -m pip install -r requirements.txt
 5. Set your environment variables in setup.sh
 6. Source the setup file - source setup.sh
-7. export PYTHONPATH=$PYTHONPATH:/..path...to...your...Rest-Api...directory
+7. export PYTHONPATH=$PYTHONPATH:/<path..to..your..Rest..Api..directory>
 8. In case of database - python3 manage.py db init
-                         python3 manage.py db migrate
-                         python3 manage.py db upgrade
-9. Run the app - python3 app.py
+9. In case of database - python3 manage.py db migrate
+10. In case of database - python3 manage.py db upgrade
+11. Run the app - python3 app.py
