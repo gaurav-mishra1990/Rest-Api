@@ -27,7 +27,7 @@ Mako==1.1.0
 MarkupSafe==1.1.1
 more-itertools==8.0.2
 numba==0.46.0
-numpy==1.17.4
+numpy==1.22.0
 phonemizer==2.0.1
 Pillow==6.2.1
 protobuf==3.11.1
